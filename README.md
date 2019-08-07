@@ -72,3 +72,10 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
 
+Additional Packages:
+
+
+  - react-big-calendar (https://intljusticemission.github.io/react-big-calendar/)
+  - react-datepicker (https://reactdatepicker.com/#example-54)
+  - react-skylight (http://marcio.github.io/react-skylight/)
+  
