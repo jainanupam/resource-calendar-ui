@@ -7,17 +7,21 @@ import moment from 'moment';
 import './scss/styles.scss'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Card from './Card.js';
-import AddEvent from './components/AddEvent.js';
+import FormDialog from './components/FormDialog';
+// The following two are required for material-ui DatePicker
+// element's proper functioning.
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 const localizer = momentLocalizer(moment)
-const avlblViews = {"month": true, "day": true, "week": true}
+const avlblViews = { "month": true, "day": true, "week": true }
 const mySampleEventsList = [
   {
     id: 0,
     title: 'All Day Event with long title',
     allDay: true,
     start: new Date(2019, 7, 1),
-    end: new Date(2019, 7, 2),
+    end: new Date(2019, 7, 1),
   },
   {
     id: 1,
@@ -40,18 +44,19 @@ class App extends React.Component {
     super(props);
     this.state = {
       events: mySampleEventsList,
-      showEvent:false
+      showEvent: false,
+      newEvent: null
     };
 
     this.bindScopes([
       'timesToEvents',
-      'handleSelect'
+      'handleSelect',
+      'addEvent',
     ]);
 
-    let allViews = Object.keys(Views).map(k => Views[k])
-    console.log("allVIews", allViews);
+    // let allViews = Object.keys(Views).map(k => Views[k])
+    // console.log("allVIews", allViews);
 
-    this.addEvent = null;
   }
 
   bindScopes(keys) {
@@ -92,10 +97,20 @@ class App extends React.Component {
   }
 
   // Handle slot selection event for booking a resource
-  handleSelect = ({start, end}) => {
-   //alert('start ' + start + ' end ' + end);
-   //this.addEvent = <AddEvent />
-   this.setState({showEvent: true});
+  handleSelect = ({ start, end }) => {
+    //alert('start ' + start + ' end ' + end);
+    //this.addEvent = <AddEvent />
+    console.log('start time before calling form dialog ' + start);
+    console.log('end time before calling form dialog ' + end);
+    console.log('this before ' + this);
+
+    this.setState({
+      showEvent: true,
+      newEvent: {
+        'start': start,
+        'end': end
+      }
+    });
 
     /* const title = window.prompt('New Event name')
     if (title)
@@ -116,46 +131,86 @@ class App extends React.Component {
     // const addEvent = (start, end) => {
     // <AddEvent addEvent={this.addEvent} />
     // } 
-    let addEvent;
-    if(this.state.showEvent) {
-      addEvent = <AddEvent />;
+    let addEventDialog;
+    if (this.state.showEvent) {
+      addEventDialog = <FormDialog eventTime={this.state.newEvent}
+        open={true} addEventCallback={this.addEvent} />;
     }
     return (
       <div className="app">
-        <div>{addEvent}</div>
-        <div className="example">
-          <Card className="examples--header">
-            {
-              this.state.events === null ?
-                (<Calendar
-                  selectable={true}
-                  localizer={localizer}
-                  events={mySampleEventsList}
-                  views={avlblViews}
-                  onSelectEvent={event => alert(event.title)}
-                  onSelectSlot={this.handleSelect}
-                />)
-                :
-                (<Calendar
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <div>{addEventDialog}</div>
+
+          <div className="example">
+            <Card className="examples--header">
+              {
+
+                <Calendar
                   selectable={true}
                   localizer={localizer}
                   events={this.state.events}
                   views={avlblViews}
                   onSelectEvent={event => alert(event.title)}
                   onSelectSlot={this.handleSelect}
-                />)
-            }
+                />
+              }
 
-          </Card>
-        </div>
+            </Card>
+          </div>
+        </MuiPickersUtilsProvider>
       </div>
 
     );
   }
 
   // Callback method to be called from AddEvent class.
-  addEvent = (event) => {
-    console.log("New event to be scheduled " + event);
+  addEvent(event) {
+    // this.setState({
+    //   showEvent: false,
+    //   newEvent: null
+    // });
+    const title = event['title'];
+    const team = event['team'];
+    const startDate = event['startDate'];
+    const endDate = event['endDate'];
+
+    console.log("New event to be scheduled " + title);
+    console.log("New event to be scheduled by team " + team);
+    console.log("New event to be scheduled starting at: " + startDate);
+    console.log("New event to be scheduled ending at: " + endDate);
+    console.log('this after ' + this.state.showEvent);
+    console.log('this after ' + this.state.events.length);
+
+    if (title)
+      this.setState({
+        showEvent: false,
+        newEvent: null,
+        events: [
+          ...this.state.events,
+          {
+            startDate,
+            endDate,
+            title,
+          },
+        ],
+      });
+
+    console.log('this after ' + this.state.events.length);
+    /* if (title) {
+      console.log('title is received. updating state ');
+      this.setState({
+        showEvent: false,
+        newEvent: null,
+        events: [
+          ...this.state.events,
+          {
+            startDate,
+            endDate,
+            title,
+          },
+        ],
+      })
+    } */
   }
 
 }

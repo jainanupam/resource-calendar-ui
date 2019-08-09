@@ -78,4 +78,9 @@ Additional Packages:
   - react-big-calendar (https://intljusticemission.github.io/react-big-calendar/)
   - react-datepicker (https://reactdatepicker.com/#example-54)
   - react-skylight (http://marcio.github.io/react-skylight/)
-  
+  - react-big-calendar-like-google (https://onursimsek94.github.io/react-big-calendar/examples/index.html)
+  - moment (https://momentjs.com/)
+  - material-ui pickers (npm i @material-ui/pickers)
+  - material-ui core (npm i @material-ui/core)
+  - date-io moment (npm i @date-io/moment)
+  - 
